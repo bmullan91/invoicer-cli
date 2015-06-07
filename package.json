@@ -1,0 +1,19 @@
+{
+  "name": "invoicer",
+  "version": "0.0.0",
+  "description": "",
+  "main": "invoicer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "hogan": "^1.0.2",
+    "commander": "^2.8.1",
+    "async": "^0.9.0",
+    "prompt": "^0.2.14",
+    "mkdirp": "^0.5.1"
+  }
+}
