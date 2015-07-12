@@ -1,19 +1,23 @@
 {
-  "name": "invoicer",
-  "version": "0.0.0",
-  "description": "",
+  "name": "invoicer-cli",
+  "version": "0.0.1",
+  "description": "Invoices made simple",
   "main": "invoicer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "invoicer": "node invoicer.js"
+  },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "hogan": "^1.0.2",
-    "commander": "^2.8.1",
     "async": "^0.9.0",
+    "commander": "^2.8.1",
+    "invoicer-html-template": "^1.0.0",
+    "mkdirp": "^0.5.1",
     "prompt": "^0.2.14",
-    "mkdirp": "^0.5.1"
+    "write": "^0.2.0"
   }
 }

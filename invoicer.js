@@ -1,92 +1,115 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var hogan = require('hogan');
-var async = require('async');
-var config = require('./config'); // This can be extendable by the user
+var write = require('write');
+var path = require('path');
+var fs = require('fs');
 
-//TODO tidy template
-var defaultTemplate = hogan.compile(require('./template'));
-
-
-//generators
-var generateInvoice = require('./lib/promptQuestions/generateInvoice');
-var generateCompany = require('./lib/promptQuestions/generateCompany');
-var generateServies = require('./lib/promptQuestions/generateService');
-
-//helper stuff
-var mediator = require('./lib/invoice-mediator');
+var configFilename = '.invoicer-config.json';
 var StoreItem = require('./lib/StoreItem');
 
+//commands
+var initCommand = require('./lib/init');
+var generateCommand = require('./lib/generate');
+
+//templates
+var defaultHtmlTemplate = require('invoicer-html-template');
+
 program
-    .version('0.0.1')
-    .option('-m, --me <path>', 'Your company JSON file')
-    .option('-c, --client <path>', 'Client company JSON file')
-    .option('-s, --services <path>', 'From company JSON file')
-    .option('-o, --outfile <path>', 'Where do you want it to go?')
-    .option('-f, --format <string>', 'json, html or csv')
-    .parse(process.argv);
+  .command('init')
+  .description('Initialise a new directory to store and generate invoices')
+  .action(function init() {
+    var options = {
+      configLocation: process.cwd() + '/' + configFilename
+    };
 
-//run through each piece of the puzzle
-async.series({
+    initCommand(options, function(err, data) {
+      //done..
+      //prompt user if they wish to generate an invoice
+    });
+  });
 
-  invoice: function(cb) {
-    generateInvoice(cb);
-  },
-
-  me: function(cb) {
-    var storeItem = new StoreItem({ dirName: '/me', storePath: config.storePath });
-    mediator({
-      storeItem: storeItem,
-      userArg: program.me,
-      generator: generateCompany.bind(null, { description: 'Generate your company JSON?' })
-    }, cb);
-  },
-
-  client: function(cb) {
-    var storeItem = new StoreItem({ dirName: '/clients', storePath: config.storePath });
-    mediator({
-      storeItem: storeItem,
-      userArg: program.me,
-      generator: generateCompany.bind(null, { description: 'Generate your client JSON?' })
-    }, cb);
-  },
-
-  services: function(cb) {
-    mediator({
-      userArg: program.services,
-      generator: generateServies
-    }, cb);
-  }
-
-
-}, function(err, data) {
-  var output;
-
-  if(!program.format || program.format === 'json') {
-    output = JSON.stringify(data, null, 2);
-  }
-
-  if(program.format === 'html') {
-    //TODO check for a passed template
-    //mustashe compatable
-    output = defaultTemplate.render(data);
-  }
-
-  if(program.format === 'csv') {
-    //TODO
-  }
-
-  if(output) {
-    if(program.outfile) {
-      //write to file
+program
+  .command('generate [thing]')
+  .description('generate things!')
+  .option('--from <path>', 'Your company JSON file')
+  .option('--to <path>', 'Client company JSON file')
+  .option('--services <path>', 'Services JSON file')
+  .option('-t, --template', 'json|html|csv or path to template function')
+  .option('-o, --outfile <path>', 'Where do you want it to go?')
+  .action(function generate(thing, options) {
+    if(!fs.existsSync(path.join(process.cwd(), configFilename))) {
+      console.log('no config file found, run: $ invoicer init');
+      process.exit();
     } else {
-      process.stdout.write(output);
+      var config = require(path.join(process.cwd(), configFilename));
     }
-  }
 
+    var opts = {
+      config: config,
+      program: program,
+      params: {
+        thing: thing,
+        options: options
+      }
+    };
+
+    opts.params.options.template = thing ? 'json' : (opts.params.options.template || 'html');
+
+    generateCommand(opts, function(err, data) {
+      if(err || !data || !Object.keys(data).length) {
+        program.outputHelp();
+        process.exit();
+      }
+
+      var output;
+      var filename;
+      var jsonOutput = JSON.stringify(data, null, 2);
+
+      switch(opts.params.options.template) {
+        case 'html':
+          output = defaultHtmlTemplate.render(data);
+          filename = data.invoice.number + '.html';
+        break;
+
+        case 'csv':
+          //TODO
+        break;
+
+        case 'json':
+          output = jsonOutput;
+          filename = data.invoice.number + '.json';
+        break;
+
+        default:
+          //todo
+          //use passed template..
+          //check it exists
+          //require it and call the render function
+        break;
+      }
+
+      if(output) {
+        //1. write to store/invoices as a copy of the json
+        var storeItem = new StoreItem({ dirName: '/invoices', storePath: opts.config.storePath });
+        storeItem.save((data.invoice.number + '.json'), jsonOutput);
+
+        //2. write the user specifies outfile or invoicesPath
+        var outfilePath = opts.params.options.outfile || opts.config.invoicesPath;
+        var invoicePath = path.join(outfilePath, filename);
+        write.sync(invoicePath, output);
+
+        console.log('\nNew invoice created at:\n' + invoicePath + '\n');
+      }
+
+    });
+
+  });
+
+program.parse(process.argv);
+
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
   process.exit();
-
-});
-
-
+}
