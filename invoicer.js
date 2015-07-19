@@ -25,7 +25,7 @@ program
 
     initCommand(options, function(err, data) {
       //done..
-      //prompt user if they wish to generate an invoice
+      //prompt user if they wish to generate an invoice?
     });
   });
 
@@ -41,10 +41,9 @@ program
     if(!fs.existsSync(path.join(process.cwd(), configFilename))) {
       console.log('no config file found, run: $ invoicer init');
       process.exit();
-    } else {
-      var config = require(path.join(process.cwd(), configFilename));
     }
 
+    var config = require(path.join(process.cwd(), configFilename));
     var opts = {
       config: config,
       program: program,
@@ -69,7 +68,7 @@ program
       switch(opts.params.options.template) {
         case 'html':
           output = defaultHtmlTemplate.render(data);
-          filename = data.invoice.number + '.html';
+          filename = data.invoice.number + '.' + defaultHtmlTemplate.format;
         break;
 
         case 'csv':
@@ -101,13 +100,10 @@ program
 
         console.log('\nNew invoice created at:\n' + invoicePath + '\n');
       }
-
     });
-
   });
 
 program.parse(process.argv);
-
 
 if (!process.argv.slice(2).length) {
   program.outputHelp();
