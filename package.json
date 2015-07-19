@@ -1,6 +1,6 @@
 {
   "name": "invoicer-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Invoices made simple",
   "main": "invoicer.js",
   "scripts": {
