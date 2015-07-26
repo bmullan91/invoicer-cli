@@ -1,15 +1,26 @@
 {
   "name": "invoicer-cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Invoices made simple",
   "main": "invoicer.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bmullan91/invoicer-cli.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
     "invoicer": "./invoicer.js"
   },
-  "author": "",
+  "keywords": [
+    "invoice",
+    "invoicer",
+    "invoicer-cli",
+    "invoices",
+    "expenses"
+  ],
+  "author": "Brian Mullan <bmullan91@gmail.com>",
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
