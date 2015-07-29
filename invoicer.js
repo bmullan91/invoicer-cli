@@ -77,7 +77,10 @@ program
 
         case 'json':
           output = jsonOutput;
-          filename = data.invoice.number + '.json';
+          filename = data.invoice
+            ? data.invoice.number
+            : 'generated-' + (thing || '');
+          filename += '.json';
         break;
 
         default:
@@ -88,18 +91,26 @@ program
         break;
       }
 
-      if(output) {
-        //1. write to store/invoices as a copy of the json
-        var storeItem = new StoreItem({ dirName: '/invoices', storePath: opts.config.storePath });
-        storeItem.save((data.invoice.number + '.json'), jsonOutput);
-
-        //2. write the user specifies outfile or invoicesPath
-        var outfilePath = opts.params.options.outfile || opts.config.invoicesPath;
-        var invoicePath = path.join(outfilePath, filename);
-        write.sync(invoicePath, output);
-
-        console.log('\nNew invoice created at:\n' + invoicePath + '\n');
+      if(!output) {
+        console.log('.... something bad happend?');
+        return;
       }
+
+      if(thing) {
+        //ouput JSON to stdout
+        return console.log(output);
+      }
+
+      //1. write to store/invoices as a copy of the json
+      var storeItem = new StoreItem({ dirName: '/invoices', storePath: opts.config.storePath });
+      storeItem.save((data.invoice.number + '.json'), jsonOutput);
+
+      //2. write the user specifies outfile or invoicesPath
+      var outfilePath = opts.params.options.outfile || opts.config.invoicesPath;
+      var invoicePath = path.join(outfilePath, filename);
+      write.sync(invoicePath, output);
+
+      console.log('\nNew invoice created at:\n' + invoicePath + '\n');
     });
   });
 

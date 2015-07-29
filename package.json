@@ -28,6 +28,7 @@
     "commander": "^2.8.1",
     "invoicer-html-template": "^1.0.1",
     "lodash.assign": "^3.2.0",
+    "lodash.set": "^3.7.4",
     "mkdirp": "^0.5.1",
     "prompt": "^0.2.14",
     "write": "^0.2.0"
