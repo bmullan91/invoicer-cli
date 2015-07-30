@@ -1,12 +1,12 @@
-# invoicer
+# invoicer-cli
 
-A simple way to generate invoices, via a cli utility.
+A simple way to generate invoices, via a cli utility. [Example invoice](https://www.npmjs.com/package/invoicer-html-template).
 
-## installation
+## Installation
 
 `npm install invoicer-cli -g`
 
-## usage
+## Usage
 
 ### Step 1
 
@@ -67,7 +67,7 @@ You can generate the seperate pieces of JSON seperately.
 
 JSON is output to stdout.
 
-## templates
+## Templates
 
 The default html template is a seperate [module](https://www.npmjs.com/package/invoicer-html-template).
 
