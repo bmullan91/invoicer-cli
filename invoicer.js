@@ -57,6 +57,10 @@ program
 
     generateCommand(opts, function(err, data) {
       if(err || !data || !Object.keys(data).length) {
+        if(err) {
+          console.log(err);
+        }
+
         program.outputHelp();
         process.exit();
       }
