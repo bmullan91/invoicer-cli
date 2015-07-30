@@ -8,16 +8,19 @@ A simple way to generate invoices, via a cli utility.
 
 ## usage
 
-
-### `invoicer init`
+### Step 1
 
 Create a new folder where you want to store the json files and invoices that are generated.
 
-TODO insert GIF
-
 `mkdir my-invoices && cd my-invoices`
 
-Running `invoicer init` will prompt you for some basic information:
+### Step 2
+
+Run:
+
+`invoicer init`
+
+This will prompt you for some basic information:
 
 - Where to store the invoices (default is `cwd/invoices`)
 - Where to store the json files (default is `cwd/store`)
@@ -31,24 +34,28 @@ This store the information within `cwd/.invoicer-config.json`:
 }
 ```
 
-### `invoicer generate`
+### Step 3
 
-This will prompt the user with all the necessary information to generate an invoice.
+Run:
 
-TODO insert GIF
+`invoicer generate`
 
-Arguments:
+This will prompt the user with all the necessary information to generate an invoice step by step.
+
+##### Options:
 
 - `--from` (path) from company JSON file 
 - `--to` (path) to company JSON file
 - `--services` (path) services JSON file
-- `-t, --template` html | csv | json or path to a custom template, see below (link) 
+- `-t, --template` html | csv | json or path to a custom template, see below. 
 - `-o, --outfile` file to output the invoice (default config.invoicesPath)
 
 
-### `invoicer generate [thing]`
+### Custom
 
-Use this when you want to generate pieces of JSON directly.
+You can generate the seperate pieces of JSON seperately.
+
+`invoicer generate [thing]`
 
 **thing** can be:
 
@@ -61,6 +68,10 @@ Use this when you want to generate pieces of JSON directly.
 JSON is output to stdout.
 
 ## templates
+
+The default html template is a seperate [module](https://www.npmjs.com/package/invoicer-html-template).
+
+TODO.. This isn't wired up to accept custom templates just yet.
 
 A template needs to have two pieces of information:
 
@@ -85,8 +96,6 @@ module.exports = {
   }
 };
 ```
-
-The default html template is a seperate [module](https://www.npmjs.com/package/invoicer-html-template).
 
 ## Prompt tips
 
